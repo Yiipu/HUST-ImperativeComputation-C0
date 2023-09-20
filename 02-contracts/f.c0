@@ -1,0 +1,50 @@
+#use <util>
+
+int POW(int x, int y)
+//@requires y >= 0;
+{
+    if(y==0)
+        return 1;
+    else 
+    {
+        int exp = POW(x,y-1);
+        int INT_MAX = int_max();
+        int INT_MIN = int_min();
+        if((exp>0 && x<=INT_MAX/exp && x>=INT_MIN/exp) || 
+           (exp==0) ||
+           (exp==-1 && x>=-INT_MAX) ||
+           (exp<-1 && x>=INT_MAX/exp && x<=INT_MIN/exp))
+            return x*exp;
+        else 
+            error("Overflow");
+    }    
+}
+
+int f (int x, int y)
+//@requires y >= 0;
+//@ensures \result == POW(x, y);
+{
+    int r = 1;
+    int b = x; /* base */
+    int e = y; /* exponent */
+    while (e > 0)
+        //@loop_invariant e >= 0;
+        //@loop_invariant r * POW(b, e) == POW(x, y);
+        {
+            if (e % 2 == 1) {
+                int INT_MAX = int_max();
+                int INT_MIN = int_min();
+                if((b>0 && r<=INT_MAX/b && r>=INT_MIN/b) || 
+                (b==0) ||
+                (b==-1 && r>=-INT_MAX) ||
+                (b<-1 && r>=INT_MAX/b && r<=INT_MIN/b))
+                r = b*r;
+            else 
+                error("Overflow");   
+            }
+            b = b * b;
+            e = e / 2;
+        }
+    //@assert e == 0;
+    return r * b;
+}
