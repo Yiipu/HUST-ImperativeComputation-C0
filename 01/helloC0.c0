@@ -1,0 +1,8 @@
+// helloC0.c0
+
+#use <conio>
+
+int main(){
+    print("Hello World!");
+    return 0;
+}
