@@ -1,0 +1,22 @@
+# vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Object Files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Executable Files
+*.exe
+
+# Logs
+*.log
+
+# Library
+*.a
+*.lib
