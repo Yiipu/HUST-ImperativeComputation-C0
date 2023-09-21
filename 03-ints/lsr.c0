@@ -1,0 +1,5 @@
+int lsr(int x, int y)
+{
+    int mask = ~ (-1 << (32 - y));
+    return (x >> y) & mask;
+}

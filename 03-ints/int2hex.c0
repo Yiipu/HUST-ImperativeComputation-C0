@@ -1,0 +1,18 @@
+#use <conio>
+#use <util>
+#use <string>
+
+string my_int2hex(int x) 
+//@ensures string_equal(\result, int2hex(x));
+{
+    int _x = x;
+    char[] hex_chararray = alloc_array(char, 9);
+    for(int i = 7; i >= 0; i--)
+    {
+        int h = _x & 0xf;
+        hex_chararray[i] = char_chr(h < 10 ? char_ord('0') + h : char_ord('A') + h- 10);
+        _x >>= 4;
+    }
+    hex_chararray[8] = '\0';
+    return string_from_chararray(hex_chararray);
+}

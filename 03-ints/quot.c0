@@ -1,0 +1,18 @@
+int quot(int x, int y)
+//@ensures \result == x / y;
+{
+    if(y == 0)
+        error("divisor cannot be 0");
+    if(x < y)
+        return 0;
+    int k = 0;
+    int c = y;
+    while(x >= c)
+    {
+        if(x < y + c)
+            return 1 << k;
+        c <<= 1;
+        k += 1;
+    }
+    return quot(x - (c >> 1), y) + (1 << (k - 1));
+}

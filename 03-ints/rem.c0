@@ -1,0 +1,16 @@
+int rem(int x, int y)
+//@ensures \result == x % y;
+{
+    if(y == 0)
+        error("divisor cannot be 0");
+    if(x < y)
+        return x;    
+    int c = y;
+    while(x >= c)
+    {
+        if(x < y + c)
+            return x - c;
+        c <<= 1;
+    }
+    return rem(x - (c >> 1), y);
+}
