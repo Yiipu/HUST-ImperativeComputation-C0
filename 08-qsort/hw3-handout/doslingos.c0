@@ -1,0 +1,46 @@
+#use "./lib/readfile.c0"
+#use "./lib/stringsearch.c0"
+
+int count_vocab(string[] vocab, int[] freq, int v, string tweetfile, bool fast)
+//@requires v == \length(vocab) && v == \length(freq);
+//@requires is_sorted(vocab, 0, v) && all_distinct(vocab, v);
+//@ensures (\forall int i; 0 <= i && i < v; freq[i] == 0);
+{
+    int count = 0;
+    string_bundle words = read_words(tweetfile);
+    string[] tweet_words = string_bundle_array(words);
+    int tweet_length = string_bundle_length(words);
+
+    int i = 0;
+
+    while (i < tweet_length) {
+        string current_word = tweet_words[i];
+
+        // Check if the word is in the vocab
+        int index;
+        if (fast) {
+            index = binsearch(current_word, vocab, v);
+        } else {
+            index = linsearch(current_word, vocab, v);
+        }
+
+        if (index == -1) {
+            // Word not found in vocab
+            count++;
+
+            // Find the index to update freq
+            index = 0;
+            while (index < v && string_compare(current_word, vocab[index]) > 0) {
+                index++;
+            }
+
+            // Update freq
+            freq[index - 1]++;
+        }
+        i++;
+    }
+    
+    return count;
+}
+
+

@@ -1,0 +1,28 @@
+int main() {
+    string[] A = alloc_array(string, 4);
+    string[] B = alloc_array(string, 4);
+
+    A[0] = "Apple";
+    A[1] = "Banana";
+    A[2] = "Card";
+    A[3] = "Delta";
+    print(A[2]);
+    B[0] = "Apple";
+    B[1] = "Banana";
+    B[2] = "Apple";
+    B[3] = "Delta";
+    print(B[2]);
+
+    int n = 4;
+
+    bool result1 = all_distinct(A, n);
+    bool result2 = all_distinct(B, n);
+
+    if (result1 && !result2) {
+        print("pass");
+    } else {
+        print("fall");
+    }
+
+    return 0;
+}

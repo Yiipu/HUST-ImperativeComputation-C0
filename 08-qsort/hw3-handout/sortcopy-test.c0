@@ -1,0 +1,39 @@
+bool all_in(string[] A, string[] B, int lower, int upper) {
+    for (int i = 0; i < \length(A); i++) {
+        bool found = false;
+        for (int j = lower; j < upper; j++) {
+            if (string_equal(A[i], B[j])) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    string[] A = alloc_array(string, 4);
+
+    // Initialize the array elements
+    A[0] = "banana";
+    A[1] = "cherry";
+    A[2] = "apple";
+    A[3] = "date";
+
+    int lower = 0;
+    int upper = 3;
+
+    // Test the sortcopy function
+    string[] sortedCopy = sortcopy(A, lower, upper);
+
+    // Assertion: Check if the copied array is sorted
+    //@assert is_sorted(sortedCopy, 0, upper - lower);
+
+    // Assertion: Check if all the elements can be found in copied array
+    //@assert all_in(A, sortedCopy, 0, lower, upper);
+
+    return 0;
+}
