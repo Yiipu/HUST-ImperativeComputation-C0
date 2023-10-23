@@ -1,0 +1,163 @@
+/*
+ * Clac, stack-based calculator language
+ *
+ * 15-122 Principles of Imperative Computation
+ */
+
+#use <string>
+#use <parse>
+#use <conio>
+#use <args>
+#use <util>
+
+bool need_two_elem(string tok) {
+  return (string_equal(tok, "+") || string_equal(tok, "-") ||
+          string_equal(tok, "*") || string_equal(tok, "/") || 
+          string_equal(tok, "%") || string_equal(tok, ">") ||
+          string_equal(tok, "<") || string_equal(tok, "swap"));
+}
+
+bool need_three_elem(string tok) {
+  return (string_equal(tok, "rot"));
+}
+
+bool need_one_elem(string tok) {
+  return (string_equal(tok, "dup") || string_equal(tok, "drop") ||
+          string_equal(tok, "skip") || string_equal(tok, "if") ||
+          string_equal(tok, "pick"));
+}
+
+/* Return true: clac top-level interpreter will expect more input */
+/* Return false: clac top-level interpreter will exit */
+bool eval(queue Q, stack S)
+//@ensures \result == false || queue_empty(Q);
+{
+  while (!queue_empty(Q)) {
+    string tok = deq(Q); /* is this dequeue safe?  
+    answer: Yes. check the condition in while()*/
+    print("Read: "); print(tok); print("\n");
+    if (string_equal(tok, "print")) {
+      if(stack_empty(S))
+        print("stack empty");
+      else {
+        int x = pop(S);
+        printint(x); print("\n");
+      }
+    } else if (string_equal(tok, "quit")) {
+      return false;             /* do not continue */
+    } else if (need_two_elem(tok)) {
+
+      if(stack_empty(S))
+        error(string_join("not enough elements on the stack ", tok));
+      int y = pop(S);
+      if(stack_empty(S))
+        error(string_join("not enough elements on the stack ", tok));
+      int x = pop(S);
+
+      if (string_equal(tok, "+")) {
+        push(S, x + y);
+      } else if (string_equal(tok, "-")) {
+        push(S, x - y);
+      } else if (string_equal(tok, "*")) {
+        push(S, x * y);
+      } else if (string_equal(tok, "/")) {
+        if (y == 0) {
+          error(string_join("Division by 0 ", tok));
+        }
+        if(y==-1&&x==int_min()){
+          error(string_join("r division of int_min() by -1 ", tok));
+        }
+        push(S, x / y);
+      } else if (string_equal(tok, "%")) {
+        if (y == 0) {
+          error(string_join("Modulus by 0 ", tok));
+        }
+        push(S, x % y);
+      } else if (string_equal(tok, ">")){
+        push(S, x > y ? 1 : 0);
+      } else if (string_equal(tok, "<")){
+        push(S, x < y ? 1 : 0);
+      } else if (string_equal(tok, "swap")){
+        push(S, y);
+        push(S, x);
+      }
+    }else if (need_three_elem(tok)) {
+      if(stack_empty(S))
+        error(string_join("not enough elements on the stack ", tok));
+      int z = pop(S);
+      if(stack_empty(S))
+        error(string_join("not enough elements on the stack ", tok));
+      int y = pop(S);
+      if(stack_empty(S))
+        error(string_join("not enough elements on the stack ", tok));
+      int x = pop(S);
+
+      if (string_equal(tok, "rot")) {
+        push(S, y);
+        push(S, z);
+        push(S, x);
+      } else if(string_equal(tok, "drop")){
+        //should be continue in C but C0... 
+      }
+    }else if (need_one_elem(tok)){
+      if(stack_empty(S))
+        error(string_join("not enough elements on the stack ", tok));
+      int x = pop(S);
+
+      if (string_equal(tok, "dup")) {
+        push(S, x);
+        push(S, x);
+      } else if(string_equal(tok, "skip")){
+        if(x<0){
+          error(string_join("can't skip negative steps ", tok));
+        }
+        if(x != 0){
+          for(int i = 0; i < x; i++){
+            if(queue_empty(Q)){
+              error(string_join("not enough elements on the queue ", tok));
+            }
+            deq(Q);
+          }
+        }
+      }else if(string_equal(tok, "if")){
+        if(x == 0){
+          for(int i = 0; i < 2; i++){
+            if(queue_empty(Q)){
+              error(string_join("not enough elements on the queue ", tok));
+            }
+            deq(Q);
+          }
+        }else{
+          //should be continue in C but C0... 
+        }
+      }else if(string_equal(tok, "pick")){
+        if(x<0){
+          error(string_join("can't pick negative elements ", tok));
+        }
+        stack temp = stack_new();
+        for(int i=0; i<x; i++){
+          push(temp, pop(S));
+        }
+        int y = temp->top->data;
+        for(int i=0; i<x; i++){
+          push(S, pop(temp));
+        }
+        push(S, y);
+      }
+    }else if(string_equal(tok, "else")){
+      if(queue_empty(Q)){
+        error(string_join("not enough elements on the queue ", tok));
+      }
+      deq(Q);
+    }else {
+      /* not defined as an operation name, should be an int */
+      int* p = parse_int(tok, 10);
+      if (p == NULL) { /* not an int */
+        /* call error(msg) which prints msg and aborts */
+        error(string_join("undefined token ", tok));
+      }
+      push(S, *p);
+    }
+  }
+  return true;                  /* continue */
+}
