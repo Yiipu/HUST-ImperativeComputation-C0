@@ -76,7 +76,7 @@ X---Y
     style X fill:#f100,stroke-width:0px
     ```
 
-    需要先进行一次以 B 为根节点的左旋：
+    需要先进行一次以 A 为根节点的左旋：
 
     ```mermaid
     graph TB
